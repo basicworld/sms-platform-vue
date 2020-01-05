@@ -1,4 +1,3 @@
-
 const tokens = {
   admin: {
     token: 'admin-token'
@@ -9,16 +8,19 @@ const tokens = {
 }
 
 const users = {
+  // token 名称为 'admin-token'
   'admin-token': {
     roles: ['admin'],
     introduction: 'I am a super administrator',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'Super Admin' // user name
   },
   'editor-token': {
     roles: ['editor'],
     introduction: 'I am an editor',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    avatar:
+      'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Normal Editor'
   }
 }
@@ -26,7 +28,7 @@ const users = {
 export default [
   // user login
   {
-    url: '/user/login',
+    url: '/userLogin',
     type: 'post',
     response: config => {
       const { username } = config.body
@@ -36,12 +38,12 @@ export default [
       if (!token) {
         return {
           code: 60204,
-          message: 'Account and password are incorrect.'
+          msg: 'Account and password are incorrect.'
         }
       }
 
       return {
-        code: 20000,
+        code: 0,
         data: token
       }
     }
@@ -49,7 +51,7 @@ export default [
 
   // get user info
   {
-    url: '/user/info\.*',
+    url: '/user/info.*',
     type: 'get',
     response: config => {
       const { token } = config.query
@@ -59,12 +61,13 @@ export default [
       if (!info) {
         return {
           code: 50008,
-          message: 'Login failed, unable to get user details.'
+          msg: 'Login failed, unable to get user details.'
         }
       }
 
       return {
-        code: 20000,
+        code: 0,
+        msg: 'success',
         data: info
       }
     }
@@ -76,7 +79,7 @@ export default [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 0,
         data: 'success'
       }
     }
