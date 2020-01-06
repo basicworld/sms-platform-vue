@@ -49,8 +49,6 @@ export default {
     }
   },
   mounted() {
-    console.log('lin chart mounted')
-    // this.initChart()
     this.$nextTick(() => {
       this.initChart()
     })

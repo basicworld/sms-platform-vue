@@ -25,7 +25,7 @@
                   <el-input
                     ref="message"
                     v-model="form.message"
-                    type="text"
+                    type="textarea"
                     name="message"
                     @blur="formatMessage()"
                   />
@@ -36,7 +36,7 @@
                 >
                   <el-input
                     v-model="form.phones"
-                    type="text"
+                    type="textarea"
                     @blur="formatPhones()"
                   />
                 </el-form-item>
@@ -79,7 +79,7 @@
 </template>
 <script>
 import { extractPhones } from '@/utils/validate'
-
+import { sendSms } from '@/api/sms'
 export default {
   data() {
     return {
@@ -110,11 +110,27 @@ export default {
   methods: {
     onSubmit() {
       console.log(this.form.message)
-      this.$message('message=' + this.form.message)
+
       this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true
           console.log('valid form')
+          sendSms(this.form)
+            .then(res => {
+              if (res.code === 0) {
+                this.$message(res.msg)
+              } else {
+                this.$message({
+                  message: res.msg,
+                  type: 'warning'
+                })
+              }
+              this.loading = false
+            })
+            .catch(() => {
+              console.log('admin index error')
+              this.loading = false
+            })
         } else {
           console.log('error submit!!')
           return false
@@ -147,19 +163,7 @@ export default {
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
-
-  .github-corner {
-    position: absolute;
-    top: 0px;
-    border: 0;
-    right: 0;
-  }
-
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
-  }
+  height: 100vh;
 }
 .text {
   font-size: 14px;
@@ -180,7 +184,7 @@ export default {
 
 .box-card {
   // width: 480px;
-  margin: 0 15px;
+  margin: 0 10px;
 }
 .line {
   text-align: center;

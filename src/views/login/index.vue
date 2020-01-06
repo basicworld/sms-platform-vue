@@ -27,30 +27,57 @@
           auto-complete="on"
         />
       </el-form-item>
-
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="密码"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span
-          class="show-pwd"
-          @click="showPwd"
+      <el-col :span="24">
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            placeholder="密码"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+          />
+          <span
+            class="show-pwd"
+            @click="showPwd"
+          >
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
+      </el-col>
+      <el-col :span="15">
+        <el-form-item prop="captcha">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            ref="captcha"
+            v-model="loginForm.captcha"
+            placeholder="验证码"
+            name="captcha"
+            type="text"
+            tabindex="3"
+            auto-complete="off"
+            @keyup.enter.native="handleLogin"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :span="1">&nbsp;</el-col>
+      <el-col :span="8">
+        <img
+          ref="captcha_img"
+          src="/captcha"
+          title="点击替换"
+          alt="验证码"
+          style="cursor: pointer; width:150px; height: 52px;"
+          @click="reloadCaptcha"
         >
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
-
+      </el-col>
       <el-button
         :loading="loading"
         type="primary"
@@ -60,7 +87,7 @@
 
       <div class="tips">
         <span style="margin-right:20px;">
-          ddd
+          <a href="/regist" style="color: #fff">注册</a>
         </span>
         <span> password: any</span>
       </div>
@@ -92,8 +119,9 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'wlifei@nifa.org.cn',
+        password: 'Abcd1234',
+        captcha: ''
       },
       loginRules: {
         username: [
@@ -101,7 +129,8 @@ export default {
         ],
         password: [
           { required: true, trigger: 'blur', validator: validatePassword }
-        ]
+        ],
+        captcha: [{ required: true, trigger: 'blur', message: '必填项' }]
       },
       loading: false,
       passwordType: 'password',
@@ -117,6 +146,10 @@ export default {
     }
   },
   methods: {
+    reloadCaptcha() {
+      console.log('reloadCaptcha...')
+      this.$refs.captcha_img.setAttribute('src', '/captcha?' + Math.random())
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -130,6 +163,7 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          console.log(this.loginForm)
           this.loading = true
           this.$store
             .dispatch('user/login', this.loginForm)

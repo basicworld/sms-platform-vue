@@ -1,6 +1,14 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+  <el-row
+    :gutter="40"
+    class="panel-group"
+  >
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-order">
           <div class="card-panel-icon">
@@ -11,11 +19,21 @@
           <div class="card-panel-text">
             任务
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="orderCount"
+            :duration="3200"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-message">
           <div class="card-panel-icon">
@@ -26,11 +44,21 @@
           <div class="card-panel-text">
             短信
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="smsCount"
+            :duration="2600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-group">
           <div class="card-panel-icon">
@@ -41,11 +69,21 @@
           <div class="card-panel-text">
             群组
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="groupCount"
+            :duration="3600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col
+      :xs="12"
+      :sm="12"
+      :lg="6"
+      class="card-panel-col"
+    >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-contact">
           <div class="card-panel-icon">
@@ -56,7 +94,12 @@
           <div class="card-panel-text">
             联系人
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to
+            :start-val="0"
+            :end-val="contactCount"
+            :duration="3000"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -70,9 +113,44 @@ export default {
   components: {
     CountTo
   },
+  props: {
+    panelData: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      contactCount: 0,
+      groupCount: 0,
+      orderCount: 0,
+      smsCount: 0
+    }
+  },
+  watch: {
+    panelData: {
+      deep: true,
+      handler(val) {
+        this.setPanelData(val)
+      }
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.initPanel()
+    })
+  },
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+    initPanel() {
+      this.setPanelData(this.panelData)
+    },
+    setPanelData({ panelData } = {}) {
+      console.log('setPanelData panelData=')
+      console.log(panelData)
+      this.contactCount = panelData.contactCount
+      this.groupCount = panelData.groupCount
+      this.orderCount = panelData.orderCount
+      this.smsCount = panelData.smsCount
     }
   }
 }
@@ -94,21 +172,21 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
 
     .icon-order {
-      color: #409EFF;
+      color: #409eff;
     }
     .icon-message {
-      color: #F56C6C;
+      color: #f56c6c;
     }
 
     .icon-group {
-      color: #67C23A;
+      color: #67c23a;
     }
     .icon-contact {
-      color: #E6A23C;
+      color: #e6a23c;
     }
     .card-panel-icon-wrapper {
       float: left;
@@ -143,7 +221,7 @@ export default {
   }
 }
 
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }

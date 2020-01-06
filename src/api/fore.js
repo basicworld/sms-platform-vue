@@ -7,3 +7,21 @@ export function smsSendSummary(data) {
     data
   })
 }
+
+// fore/sendreport
+export function foreSendReport(data) {
+  return request({
+    url: '/fore/sendreport',
+    method: 'post',
+    data
+  })
+}
+
+// fore/report
+export function foreReport(data) {
+  return request({
+    url: '/fore/report',
+    method: 'post',
+    data
+  })
+}

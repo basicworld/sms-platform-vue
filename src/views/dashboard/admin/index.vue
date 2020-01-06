@@ -1,6 +1,9 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group
+      :panel-data="panelGroupData"
+      @handleSetLineChartData="handleSetLineChartData"
+    />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
@@ -15,10 +18,21 @@ import PanelGroup from './components/PanelGroup'
 // 一个折线图
 import LineChart from './components/LineChart'
 
-import { smsSendSummary } from '@/api/fore'
-// 折线图数据 测试展示用
+import { smsSendSummary, foreReport } from '@/api/fore'
+// 折线图数据
 const lineChartData = {
-  chartData: [['2020-01-01', 37], ['2020-01-02', 3], ['2020-01-03', 36]]
+  chartData: []
+}
+// 面板数据
+const panelGroupData = {
+  panelData: {
+    contactCount: 3,
+    groupCount: 1,
+    orderCount: 8,
+    queueCount: 0,
+    smsCount: 13,
+    userCount: 0
+  }
 }
 
 export default {
@@ -29,20 +43,36 @@ export default {
   },
   data() {
     return {
+      panelGroupData: panelGroupData,
       lineChartData: lineChartData
     }
   },
   mounted() {
     console.log('admin dashboard mounted')
     this.handleSetLineChartData()
+    this.handleSetPanelGroupData()
   },
   methods: {
+    handleSetPanelGroupData() {
+      this.loading = true
+      foreReport()
+        .then(res => {
+          if (res.code === 0) {
+            console.log('handleSetPanelGroupData res.data=')
+            console.log(res.data)
+            this.panelGroupData = { panelData: res.data }
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          console.log('admin index error')
+          this.loading = false
+        })
+    },
     handleSetLineChartData() {
       this.loading = true
       smsSendSummary()
         .then(res => {
-          console.log('admin index res=')
-          console.log(res)
           if (res.code === 0) {
             this.lineChartData = { chartData: res.data }
           }
@@ -62,6 +92,7 @@ export default {
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
+  height: 100vh;
 
   .github-corner {
     position: absolute;

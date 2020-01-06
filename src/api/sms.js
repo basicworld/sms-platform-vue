@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import qs from 'qs'
 
 /**
  * 发送短信
@@ -8,7 +9,7 @@ export function sendSms(data) {
   return request({
     url: '/smsSend',
     method: 'post',
-    data
+    data: qs.stringify(data)
   })
 }
 

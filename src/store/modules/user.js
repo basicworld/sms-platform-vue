@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import md5 from 'js-md5'
 
 const getDefaultState = () => {
   return {
@@ -30,9 +31,13 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password, captcha } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password })
+      login({
+        username: username.trim(),
+        password: md5(password),
+        captcha: captcha.trim()
+      })
         .then(response => {
           const { data } = response
           commit('SET_TOKEN', data.token)
@@ -48,6 +53,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
+      console.log('store getInfo token=' + state.token)
       getInfo(state.token)
         .then(response => {
           const { data } = response
