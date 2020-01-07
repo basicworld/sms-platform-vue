@@ -72,6 +72,34 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+      <el-col :span="15">
+        <el-form-item prop="captcha">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            ref="captcha"
+            v-model="registForm.captcha"
+            placeholder="验证码"
+            name="captcha"
+            type="text"
+            tabindex="3"
+            auto-complete="off"
+            @keyup.enter.native="handleLogin"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :span="1">&nbsp;</el-col>
+      <el-col :span="8">
+        <img
+          ref="captcha_img"
+          src="/captcha"
+          title="点击替换"
+          alt="验证码"
+          style="cursor: pointer; width:150px; height: 52px;"
+          @click="reloadCaptcha"
+        />
+      </el-col>
 
       <el-button
         :loading="loading"
@@ -81,8 +109,9 @@
       >注册</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+        <span style="margin-right:20px;">
+          <a href="#/login" style="color: #fff">已有账号，去登录</a>
+        </span>
       </div>
 
     </el-form>
@@ -152,6 +181,10 @@ export default {
     }
   },
   methods: {
+    reloadCaptcha() {
+      console.log('reloadCaptcha...')
+      this.$refs.captcha_img.setAttribute('src', '/captcha?' + Math.random())
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''

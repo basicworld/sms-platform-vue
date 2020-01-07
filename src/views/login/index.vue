@@ -8,7 +8,6 @@
       auto-complete="on"
       label-position="left"
     >
-
       <div class="title-container">
         <h3 class="title">短信管理系统</h3>
       </div>
@@ -42,11 +41,10 @@
             tabindex="2"
             auto-complete="on"
           />
-          <span
-            class="show-pwd"
-            @click="showPwd"
-          >
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon
+              :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+            />
           </span>
         </el-form-item>
       </el-col>
@@ -76,7 +74,7 @@
           alt="验证码"
           style="cursor: pointer; width:150px; height: 52px;"
           @click="reloadCaptcha"
-        >
+        />
       </el-col>
       <el-button
         :loading="loading"
@@ -87,11 +85,9 @@
 
       <div class="tips">
         <span style="margin-right:20px;">
-          <a href="/regist" style="color: #fff">注册</a>
+          <a href="#/regist" style="color: #fff">注册</a>
         </span>
-        <span> password: any</span>
       </div>
-
     </el-form>
   </div>
 </template>

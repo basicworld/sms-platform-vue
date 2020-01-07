@@ -70,7 +70,7 @@ export const constantRoutes = [
         path: 'index',
         name: '发送短信',
         component: () => import('@/views/sendsms/index'),
-        meta: { title: '发送短信', icon: 'form' }
+        meta: { title: '发送短信', icon: 'guide' }
       }
     ]
   },
@@ -80,19 +80,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/analysys/orders',
     name: '统计分析',
-    meta: { title: '统计分析', icon: 'example' },
+    meta: { title: '统计分析', icon: 'chart' },
     children: [
       {
         path: 'orders',
         name: '任务列表',
         component: () => import('@/views/analysys/orders/index'),
-        meta: { title: '任务列表', icon: 'table' }
+        meta: { title: '任务列表', icon: 'tree-table' }
       },
       {
         path: 'smslist',
         name: '明细记录',
         component: () => import('@/views/analysys/smslist/index'),
-        meta: { title: '明细记录', icon: 'tree' }
+        meta: { title: '明细记录', icon: 'list' }
       }
     ]
   },
