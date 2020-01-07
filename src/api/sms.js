@@ -23,7 +23,7 @@ export function ordersQuery(data) {
   return request({
     url: '/ordersQuery',
     method: 'post',
-    data
+    data: qs.stringify(data)
   })
 }
 /**
@@ -32,8 +32,16 @@ export function ordersQuery(data) {
  */
 export function smslistQuery(data) {
   return request({
-    url: '/ordersQuery',
+    url: '/smslistQuery',
     method: 'post',
-    data
+    data: qs.stringify(data)
+  })
+}
+
+export function signQuery(data) {
+  return request({
+    url: '/smsSignQuery',
+    method: 'post',
+    data: qs.stringify(data)
   })
 }

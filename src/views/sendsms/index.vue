@@ -1,27 +1,20 @@
 <template>
   <div class="container">
-    <el-row>
+    <el-row class="box-space">
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <div
-              slot="header"
-              class="clearfix"
-            >
+            <div slot="header" class="clearfix">
               <span>编辑短信</span>
             </div>
             <div class="app-container">
-
               <el-form
                 ref="form"
                 :model="form"
                 :rules="sendRules"
                 label-width="80px"
               >
-                <el-form-item
-                  label="短信内容"
-                  prop="message"
-                >
+                <el-form-item label="短信内容" prop="message">
                   <el-input
                     ref="message"
                     v-model="form.message"
@@ -30,10 +23,7 @@
                     @blur="formatMessage()"
                   />
                 </el-form-item>
-                <el-form-item
-                  label="手机号"
-                  prop="phones"
-                >
+                <el-form-item label="手机号" prop="phones">
                   <el-input
                     v-model="form.phones"
                     type="textarea"
@@ -41,14 +31,17 @@
                   />
                 </el-form-item>
                 <el-form-item>
-                  <el-button
-                    type="primary"
-                    @click="onSubmit"
-                  >发送</el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="点击发送后不可撤销"
+                    placement="bottom"
+                  >
+                    <el-button type="primary" @click="onSubmit">发送</el-button>
+                  </el-tooltip>
                   <el-button @click="onCancel">清空</el-button>
                 </el-form-item>
               </el-form>
-
             </div>
           </el-card>
         </div>
@@ -56,33 +49,35 @@
       <el-col :span="12">
         <div class="grid-content bg-purple-light">
           <el-card class="box-card">
-            <div
-              slot="header"
-              class="clearfix"
-            >
+            <div slot="header" class="clearfix">
               <span>预览短信</span>
             </div>
-            <div class="app-container">
-              <el-tag>短信内容</el-tag><br>
-              {{ form.message }}
-              <br><br>
-              <el-tag>手机号</el-tag><br>
+            <div class="app-container wrap-word">
+              <span style="color: #409EFF">短信内容</span>
+              <br />
+              <br />
+
+              {{ msgsign }}{{ form.message }}
+              <br />
+              <el-divider></el-divider>
+              <span style="color: #409EFF">手机号</span>
+              <br />
+              <br />
               {{ form.phones }}
             </div>
           </el-card>
-
         </div>
       </el-col>
     </el-row>
-
   </div>
 </template>
 <script>
 import { extractPhones } from '@/utils/validate'
-import { sendSms } from '@/api/sms'
+import { sendSms, signQuery } from '@/api/sms'
 export default {
   data() {
     return {
+      msgsign: '【默认签名】',
       form: {
         message: '',
         phones: ''
@@ -107,7 +102,28 @@ export default {
       }
     }
   },
+  mounted() {
+    this.loadSign()
+  },
   methods: {
+    loadSign() {
+      signQuery()
+        .then(res => {
+          if (res.code === 0) {
+            this.msgsign = res.data
+          } else {
+            this.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          console.log('admin index error')
+          this.loading = false
+        })
+    },
     onSubmit() {
       console.log(this.form.message)
 
@@ -159,11 +175,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.container {
-  padding: 32px;
-  background-color: rgb(240, 242, 245);
-  position: relative;
-  height: 100vh;
+.box-space {
+  margin: -7.5px;
+}
+.box-space > * {
+  padding: 7.5px;
 }
 .text {
   font-size: 14px;
@@ -184,9 +200,14 @@ export default {
 
 .box-card {
   // width: 480px;
-  margin: 0 10px;
+  margin: 0;
 }
 .line {
   text-align: center;
+}
+.wrap-word {
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
 }
 </style>
