@@ -26,11 +26,11 @@ const lineChartData = {
 // 面板数据
 const panelGroupData = {
   panelData: {
-    contactCount: 3,
-    groupCount: 1,
-    orderCount: 8,
+    contactCount: 0,
+    groupCount: 0,
+    orderCount: 0,
     queueCount: 0,
-    smsCount: 13,
+    smsCount: 0,
     userCount: 0
   }
 }
@@ -61,6 +61,11 @@ export default {
             console.log('handleSetPanelGroupData res.data=')
             console.log(res.data)
             this.panelGroupData = { panelData: res.data }
+          } else {
+            this.$message({
+              message: res.msg,
+              type: 'warning'
+            })
           }
           this.loading = false
         })
@@ -75,6 +80,11 @@ export default {
         .then(res => {
           if (res.code === 0) {
             this.lineChartData = { chartData: res.data }
+          } else {
+            this.$message({
+              message: res.msg,
+              type: 'warning'
+            })
           }
           this.loading = false
         })
@@ -88,7 +98,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 @media (max-width: 1024px) {
   .chart-wrapper {
     padding: 8px;
