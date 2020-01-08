@@ -97,6 +97,34 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/contact',
+    component: Layout,
+    redirect: '/contact/add',
+    name: '通讯录',
+    meta: { title: '通讯录', icon: 'address-book' },
+    children: [
+      {
+        path: 'add',
+        name: '新增联系人',
+        component: () => import('@/views/contact/add/index'),
+        meta: { title: '新增联系人', icon: 'adduser' }
+      },
+      {
+        path: 'edit',
+        name: '联系人管理',
+        component: () => import('@/views/contact/edit/index'),
+        meta: { title: '联系人管理', icon: 'editlist' }
+      },
+      {
+        path: 'groupedit',
+        name: '群组管理',
+        component: () => import('@/views/contact/groupedit/index'),
+        meta: { title: '群组管理', icon: 'group' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

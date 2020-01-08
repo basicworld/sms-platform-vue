@@ -37,7 +37,10 @@ export function smslistQuery(data) {
     data: qs.stringify(data)
   })
 }
-
+/**
+ * 获取短信签名
+ * @param {d} data
+ */
 export function signQuery(data) {
   return request({
     url: '/smsSignQuery',
