@@ -81,7 +81,7 @@
             width="120"
           />
           <el-table-column
-            label="Actions"
+            label="操作"
             align="center"
             width="230"
             class-name="small-padding fixed-width"
@@ -170,6 +170,7 @@ import {
 export default {
   data() {
     return {
+      dialogStatus: '',
       textMap: {
         update: '编辑群组',
         create: '新增群组'
@@ -191,6 +192,8 @@ export default {
         note: ''
       },
       updateForm: {
+        id: '',
+        userId: '',
         groupName: '',
         note: ''
       },
@@ -224,7 +227,13 @@ export default {
       })
     },
     updateData() {
-      updateContactGroup(this.updateForm)
+      var reqData = {} // 请求参数
+      reqData.id = this.updateForm.id
+      reqData.userId = this.updateForm.userId
+      reqData.groupName = this.updateForm.groupName
+      reqData.note = this.updateForm.note
+      console.log(reqData)
+      updateContactGroup(reqData)
         .then(res => {
           console.log(res)
           if (res.code === 0) {
