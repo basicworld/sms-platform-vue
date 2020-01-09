@@ -54,7 +54,7 @@
                       :label="contact.id"
                       name="contact.name"
                     >
-                      {{ contact.name }}
+                      {{ contact.name + '(*' + contact.phone.slice(-3) + ')' }}
                     </el-checkbox>
                   </el-checkbox-group>
                 </el-form-item>
@@ -88,52 +88,7 @@
                   <el-button @click="onCancel">清空</el-button>
                 </el-form-item>
               </el-form>
-              <el-dialog
-                title="选择联系人"
-                width="66%"
-                :visible.sync="dialogFormVisible"
-              >
-                <el-row>
-                  <el-col :span="12">
-                    <el-form
-                      :inline="true"
-                      :rules="sendRules"
-                      label-width="80px"
-                    >
-                      <el-form-item
-                        label=""
-                        prop="groupName"
-                      >
-                        <el-input
-                          ref="groupName"
-                          type="text"
-                          name="groupName"
-                        />
-                      </el-form-item>
-                      <el-button
-                        type="primary"
-                        @click="onContactSuggest"
-                      >查询</el-button>
-                    </el-form>
-                  </el-col>
-                  <el-col :span="12">
-                    <div class="preview-head">
-                      <span>已选择联系人</span>
-                    </div>
-                  </el-col>
-                </el-row>
 
-                <div
-                  slot="footer"
-                  class="dialog-footer"
-                >
-                  <el-button
-                    type="primary"
-                    @click="updateData()"
-                  >保存</el-button>
-                  <el-button @click="dialogFormVisible = false">取消</el-button>
-                </div>
-              </el-dialog>
             </div>
           </el-card>
         </div>
@@ -148,31 +103,136 @@
               <span>预览短信</span>
             </div>
             <div class=" wrap-word">
-              <div class="preview-head">
-                <span>短信内容</span>
+              <div>
+                <div class="preview-head">
+                  <span>短信内容</span>
+                </div>
+                <div>{{ msgsign }}{{ form.message }}</div>
               </div>
-              <div>{{ msgsign }}{{ form.message }}</div>
               <el-divider></el-divider>
-              <div class="preview-head">
-                <span style="color: #409EFF">手机号</span>
+              <div>
+                <div class="preview-head">
+                  <span>手机号</span>
+                </div>
+
+                <div>{{ form.phones }}</div>
               </div>
-              <div>{{ form.phones }}</div>
               <el-divider></el-divider>
-              <div class="preview-head">
-                <span style="color: #409EFF">已选群组</span>
+              <div>
+                <div class="preview-head">
+                  <span>联系人</span>
+                </div>
+                <div>{{ previewSelectContacts() }}</div>
               </div>
-              <div>{{ previewSelectGroups() }}</div>
+              <el-divider></el-divider>
+              <div>
+                <div class="preview-head">
+                  <span>已选群组</span>
+                </div>
+                <div>{{ previewSelectGroups() }}</div>
+              </div>
             </div>
           </el-card>
         </div>
       </el-col>
     </el-row>
+
+    <el-dialog
+      title="选择联系人"
+      width="66%"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-row>
+        <el-col :span="12">
+
+          <div class="filter-container">
+            <el-input
+              v-model="contactSearchKey"
+              placeholder="搜索姓名"
+              style="width: 200px;"
+              class="filter-item"
+              @keyup.enter.native="getContactData"
+            />
+            <el-button
+              class="filter-item"
+              type="primary"
+              icon="el-icon-search"
+              @click="getContactData"
+            >
+              搜索
+            </el-button>
+          </div>
+          <el-table
+            :data="tableContactData"
+            style="width: 100%"
+          >
+            <!-- height="250" -->
+            <el-table-column
+              fixed
+              prop="name"
+              label="姓名"
+            />
+            <el-table-column
+              prop="phone"
+              label="手机号"
+            />
+            <el-table-column
+              label="操作"
+              align="center"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{ row }">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="handlePreSelectContact(row)"
+                >
+                  选择
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        <el-col :span="12">
+          <el-form>
+
+            <el-form-item
+              label="已选联系人"
+              prop="selectContacts"
+            >
+              <el-checkbox-group v-model="form.selectContacts">
+                <el-checkbox
+                  v-for="contact in allContacts"
+                  :key="contact.id"
+                  :label="contact.id"
+                  name="contact.name"
+                >
+                  {{ contact.name + '(*' + contact.phone.slice(-3) + ')' }}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+
+        </el-col>
+      </el-row>
+
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="dialogFormVisible = false"
+        >选好了</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 <script>
 import { extractPhones } from '@/utils/validate'
 import { sendSms, signQuery } from '@/api/sms'
-import { listContactGroup } from '@/api/contact'
+import { listContactGroup, listContact } from '@/api/contact'
 export default {
   data() {
     // 手机号  分组 联系人 至少选择一个
@@ -202,6 +262,7 @@ export default {
       }
     }
     return {
+      contactSearchKey: '',
       dialogFormVisible: false,
       dialogStatus: '',
 
@@ -215,8 +276,9 @@ export default {
         type: undefined
       },
       tableData: [],
-      allContactGroups: [],
-      allContacts: [{ id: 1, name: 'cc' }],
+      tableContactData: [],
+      allContactGroups: [], // 所有群组
+      allContacts: [], // 所有初步筛选的联系人
       msgsign: '【默认签名】',
       form: {
         message: '',
@@ -271,9 +333,23 @@ export default {
     this.getData()
   },
   methods: {
+    // 点击选择联系人按钮的弹窗
     handleSelectContact() {
       this.dialogFormVisible = true
+      this.getContactData()
     },
+    // 弹窗中的选择按钮事件
+    handlePreSelectContact(row) {
+      if (
+        this.allContacts.filter(x => {
+          return x.id === row.id
+        }).length < 1
+      ) {
+        this.allContacts.push(row)
+        this.form.selectContacts.push(row.id)
+      }
+    },
+    // 预览已选择的群组
     previewSelectGroups() {
       var form = this.form
       return this.allContactGroups
@@ -285,6 +361,40 @@ export default {
         })
         .join(',')
     },
+    // 预览已选择的群组
+    previewSelectContacts() {
+      var form = this.form
+      return this.allContacts
+        .filter(function(x) {
+          return form.selectContacts.indexOf(x.id) >= 0
+        })
+        .map(x => {
+          return x.name + '(*' + x.phone.slice(-3) + ')'
+        })
+        .join(',')
+    },
+    // 查询联系人 最多查5个
+    getContactData() {
+      var reqData = {} // 请求参数
+      reqData.page = 1
+      reqData.limit = 5 // 只显示前5个联系人
+      if (this.contactSearchKey && this.contactSearchKey !== '') {
+        reqData.searchKey = this.contactSearchKey
+      }
+      listContact(reqData)
+        .then(res => {
+          if (res.code === 0) {
+            this.total = res.count // 前后端命名不同的转换
+            this.tableContactData = res.data
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          console.log('error')
+          this.loading = false
+        })
+    },
+    // 查询所有群组
     getData() {
       var reqData = {} // 请求参数
       reqData.page = this.listQuery.page
@@ -322,6 +432,7 @@ export default {
           this.loading = false
         })
     },
+    // 获取短信签名
     loadSign() {
       signQuery()
         .then(res => {
@@ -340,14 +451,22 @@ export default {
           this.loading = false
         })
     },
+    // 提交 发送请求
     onSubmit() {
       console.log(this.form.message)
 
       this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true
-          console.log('valid form')
-          sendSms(this.form)
+          var reqData = {} // 请求参数
+          reqData.message = this.form.message
+          reqData.phones = this.form.phones
+          reqData.contactGroupIds = this.form.selectContactGroups.join(',')
+          reqData.contactIds = this.form.selectContacts.join(',')
+          console.log('reqData')
+          console.log(reqData)
+
+          sendSms(reqData)
             .then(res => {
               if (res.code === 0) {
                 this.$message(res.msg)

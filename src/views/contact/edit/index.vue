@@ -2,8 +2,8 @@
   <div class="container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.orderId"
-        placeholder="todo"
+        v-model="listQuery.contactSearchKey"
+        placeholder="筛选姓名"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -184,7 +184,7 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        orderId: undefined
+        contactSearchKey: undefined
       },
       //   currentPage: 1, // 默认显示页面为1
       //   pagesize: 10, //    每页的数据条数
@@ -258,8 +258,8 @@ export default {
       var reqData = {} // 请求参数
       reqData.page = this.listQuery.page
       reqData.limit = this.listQuery.limit
-      if (this.listQuery.orderId && this.listQuery.orderId !== '') {
-        reqData.orderId = this.listQuery.orderId
+      if (this.listQuery.contactSearchKey && this.listQuery.contactSearchKey !== '') {
+        reqData.searchKey = this.listQuery.contactSearchKey
       }
       listContact(reqData)
         .then(res => {
