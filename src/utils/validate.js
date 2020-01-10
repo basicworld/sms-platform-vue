@@ -49,3 +49,28 @@ export function extractPhones(text) {
   phones = uniqueArray(phones)
   return phones.toString()
 }
+
+// 密码强度校验
+// 密码验证 返回符合的条件个数 至少应该等于3
+export function checkPass(pass) {
+  if (pass.length < 8) {
+    return 0
+  } // 至少8位
+  if (pass.length > 16) {
+    return 0
+  } // 最多16位
+  var ls = 0 // 至少包含大写字母、小写字母、数字
+  if (pass.match(/([a-z])+/)) {
+    ls++
+  }
+  if (pass.match(/([0-9])+/)) {
+    ls++
+  }
+  if (pass.match(/([A-Z])+/)) {
+    ls++
+  }
+  if (pass.match(/[^a-zA-Z0-9]+/)) {
+    ls++
+  }
+  return ls
+}

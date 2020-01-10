@@ -88,7 +88,7 @@ export default {
       if (row.createDate == null || row.createDate === '') {
         return ''
       } else {
-        return timestampToTime(row.createDate)
+        return timestampToTime(row.createDate).slice(5)
       }
     },
     getData() {

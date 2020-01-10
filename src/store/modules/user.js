@@ -2,6 +2,7 @@ import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import md5 from 'js-md5'
+import { Message } from 'element-ui'
 
 const getDefaultState = () => {
   return {
@@ -39,10 +40,19 @@ const actions = {
         captcha: captcha.trim()
       })
         .then(response => {
-          const { data } = response
-          commit('SET_TOKEN', data.token)
-          setToken(data.token)
-          resolve()
+          if (response.code === 0) {
+            const { data } = response
+            commit('SET_TOKEN', data.token)
+            setToken(data.token)
+            resolve()
+          } else {
+            Message({
+              message: response.msg,
+              type: 'error',
+              duration: 5 * 1000
+            })
+            this.$message(response.msg)
+          }
         })
         .catch(error => {
           reject(error)

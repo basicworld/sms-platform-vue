@@ -17,11 +17,29 @@
         搜索
       </el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+    >
       <!-- height="250" -->
-      <el-table-column fixed prop="id" label="短信ID" width="80" />
-      <el-table-column fixed prop="phone" label="联系人(手机号)" width="140" />
-      <el-table-column prop="orderId" label="业务ID" width="80" />
+      <el-table-column
+        fixed
+        prop="id"
+        label="短信ID"
+        width="80"
+      />
+      <el-table-column
+        fixed
+        prop="phone"
+        label="联系人(手机号)"
+        width="140"
+        :formatter="formatPhone"
+      />
+      <el-table-column
+        prop="orderId"
+        label="业务ID"
+      />
+      <!-- width="80" -->
       <el-table-column
         prop="content"
         label="短信内容"
@@ -31,22 +49,22 @@
       <el-table-column
         prop="createDate"
         label="创建时间"
-        width="170"
+        width="120"
         :formatter="formatCreateDate"
       />
       <el-table-column
         prop="stateDesc"
         label="状态描述"
-        width="170"
+        width="160"
         :show-overflow-tooltip="true"
         :formatter="formatStateDesc"
       />
       <el-table-column
         prop="deliveryDate"
         label="发出时间"
-        width="170"
         :formatter="formatDeliveryDate"
       />
+      <!-- width="170" -->
     </el-table>
     <pagination
       v-show="total >= 0"
@@ -96,7 +114,20 @@ export default {
       if (row.createDate == null || row.createDate === '') {
         return ''
       } else {
-        return timestampToTime(row.createDate)
+        return timestampToTime(row.createDate).slice(5)
+      }
+    },
+    formatPhone(row, column) {
+      console.log('row=')
+      console.log(row)
+      if (
+        row.contactName === undefined ||
+        row.contactName === null ||
+        row.contactName.length < 1
+      ) {
+        return row.phone
+      } else {
+        return row.contactName + '(*' + row.phone.slice(-3) + ')'
       }
     },
     formatStateDesc(row, column) {
@@ -126,6 +157,8 @@ export default {
           console.log(res)
           if (res.code === 0) {
             this.total = res.count // 前后端命名不同的转换
+            console.log('res.data=')
+            console.log(res.data)
             this.tableData = res.data
           }
           this.loading = false

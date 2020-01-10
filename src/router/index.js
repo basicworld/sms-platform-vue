@@ -124,7 +124,21 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/userset',
+    component: Layout,
+    redirect: '/userset/resetpwd',
+    name: '设置',
+    meta: { title: '设置', icon: 'setting' },
+    children: [
+      {
+        path: 'resetpwd',
+        name: '修改密码',
+        component: () => import('@/views/userset/resetpwd/index'),
+        meta: { title: '修改密码', icon: 'password' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
