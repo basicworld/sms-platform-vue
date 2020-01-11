@@ -10,6 +10,24 @@ export function login(data) {
   })
 }
 
+// 发送验证码
+export function verifycodeSend(data) {
+  return request({
+    url: '/user/regcode/send',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+// 发送验证码
+export function regist(data) {
+  return request({
+    url: '/user/regist',
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
 export function changePassword(data) {
   console.log(data)
   return request({

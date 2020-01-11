@@ -20,7 +20,7 @@
         <el-input
           ref="username"
           v-model="registForm.username"
-          placeholder="用户名"
+          placeholder="用户名（邮箱）"
           name="username"
           type="text"
           tabindex="1"
@@ -72,34 +72,62 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-      <el-col :span="15">
-        <el-form-item prop="captcha">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            ref="captcha"
-            v-model="registForm.captcha"
-            placeholder="验证码"
-            name="captcha"
-            type="text"
-            tabindex="3"
-            auto-complete="off"
-            @keyup.enter.native="handleLogin"
+      <el-row>
+        <el-col :span="15">
+          <el-form-item prop="captcha">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              ref="captcha"
+              v-model="registForm.captcha"
+              placeholder="图片验证码"
+              name="captcha"
+              type="text"
+              tabindex="3"
+              auto-complete="off"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="1">&nbsp;</el-col>
+        <el-col :span="8">
+          <img
+            ref="captcha_img"
+            src="/captcha"
+            title="点击替换"
+            alt="验证码"
+            style="cursor: pointer; width:150px; height: 52px;"
+            @click="reloadCaptcha"
           />
-        </el-form-item>
-      </el-col>
-      <el-col :span="1">&nbsp;</el-col>
-      <el-col :span="8">
-        <img
-          ref="captcha_img"
-          src="/captcha"
-          title="点击替换"
-          alt="验证码"
-          style="cursor: pointer; width:150px; height: 52px;"
-          @click="reloadCaptcha"
-        />
-      </el-col>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="15">
+          <el-form-item prop="verifycode">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              ref="verifycode"
+              v-model="registForm.verifycode"
+              placeholder="邮箱验证码"
+              name="verifycode"
+              type="text"
+              tabindex="3"
+              auto-complete="off"
+              @keyup.enter.native="handleLogin"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="1">&nbsp;</el-col>
+        <el-col :span="8">
+          <el-button
+            size="small"
+            style="width:100%;margin-top: 10px;"
+            @click.native.prevent="sendVerifyCode"
+          >发送邮箱验证码</el-button>
+        </el-col>
+      </el-row>
 
       <el-button
         :loading="loading"
@@ -110,7 +138,10 @@
 
       <div class="tips">
         <span style="margin-right:20px;">
-          <a href="#/login" style="color: #fff">已有账号，去登录</a>
+          <a
+            href="#/login"
+            style="color: #fff"
+          >已有账号，去登录</a>
         </span>
       </div>
 
@@ -120,6 +151,9 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { verifycodeSend, regist } from '@/api/user'
+import { checkPass } from '@/utils/validate'
+import md5 from 'js-md5'
 
 export default {
   name: 'Regist',
@@ -132,15 +166,19 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value == null || value.length < 6) {
-        callback(new Error('密码长度应不小于6位'))
+      if (checkPass(value) < 3) {
+        callback(
+          new Error('密码必须包括大写、小写字母和数字，并且长度为8-16位')
+        )
       } else {
         callback()
       }
     }
     const validatePasswordConfirm = (rule, value, callback) => {
-      if (value == null || value.length < 6) {
-        callback(new Error('密码长度应不小于6位'))
+      if (checkPass(value) < 3) {
+        callback(
+          new Error('密码必须包括大写、小写字母和数字，并且长度为8-16位')
+        )
       } else if (this.registForm.password !== value) {
         callback(new Error('两次输入密码不相等'))
       } else {
@@ -149,8 +187,10 @@ export default {
     }
     return {
       registForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: '',
+        captcha: '',
+        verifycode: ''
       },
       registRules: {
         username: [
@@ -164,6 +204,13 @@ export default {
             required: true,
             trigger: 'blur',
             validator: validatePasswordConfirm
+          }
+        ],
+        verifycode: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: '必填项'
           }
         ]
       },
@@ -181,6 +228,37 @@ export default {
     }
   },
   methods: {
+    // 发送邮箱验证码
+    sendVerifyCode() {
+      if (
+        this.registForm.username === null ||
+        this.registForm.username.length < 1
+      ) {
+        this.$message({
+          message: '邮箱为必填项',
+          type: 'warning'
+        })
+        return false
+      }
+      var reqData = {} // 请求参数
+      reqData.username = this.registForm.username.trim()
+      verifycodeSend(reqData)
+        .then(res => {
+          if (res.code === 0) {
+            this.$message(res.msg)
+          } else {
+            this.$message({
+              message: res.msg,
+              type: 'warning'
+            })
+          }
+          this.loading = false
+        })
+        .catch(() => {
+          console.log('regist index verifycodeSend error')
+          this.loading = false
+        })
+    },
     reloadCaptcha() {
       console.log('reloadCaptcha...')
       this.$refs.captcha_img.setAttribute('src', '/captcha?' + Math.random())
@@ -195,17 +273,42 @@ export default {
         this.$refs.password.focus()
       })
     },
+    clear() {
+      this.registForm.username = ''
+      this.registForm.password = ''
+      this.registForm.captcha = ''
+      this.registForm.verifycode = ''
+    },
+    // 点击注册按钮
     handleRegist() {
       this.$refs.registForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store
-            .dispatch('userRegist', this.registForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
+          var reqData = {} // 请求参数
+          reqData.username = this.registForm.username.trim()
+          reqData.password = md5(this.registForm.password.trim())
+          reqData.captcha = this.registForm.captcha.trim()
+          reqData.verifyCode = this.registForm.verifycode.trim()
+          console.log(reqData)
+          regist(reqData)
+            .then(res => {
+              if (res.code === 0) {
+                this.clear()
+                this.$message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 20000
+                })
+              } else {
+                this.$message({
+                  message: res.msg,
+                  type: 'warning'
+                })
+              }
               this.loading = false
             })
             .catch(() => {
+              console.log('admin index error')
               this.loading = false
             })
         } else {
