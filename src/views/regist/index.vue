@@ -72,6 +72,7 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+
       <el-row>
         <el-col :span="15">
           <el-form-item prop="captcha">
@@ -128,7 +129,6 @@
           >发送邮箱验证码</el-button>
         </el-col>
       </el-row>
-
       <el-button
         :loading="loading"
         type="primary"
@@ -189,17 +189,25 @@ export default {
       registForm: {
         username: '',
         password: '',
+        passwordConfirm: '',
         captcha: '',
         verifycode: ''
       },
       registRules: {
         username: [
+          { required: true, trigger: 'change', validator: validateUsername },
           { required: true, trigger: 'blur', validator: validateUsername }
         ],
         password: [
+          { required: true, trigger: 'change', validator: validatePassword },
           { required: true, trigger: 'blur', validator: validatePassword }
         ],
         passwordConfirm: [
+          {
+            required: true,
+            trigger: 'change',
+            validator: validatePasswordConfirm
+          },
           {
             required: true,
             trigger: 'blur',
@@ -207,6 +215,13 @@ export default {
           }
         ],
         verifycode: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: '必填项'
+          }
+        ],
+        captcha: [
           {
             required: true,
             trigger: 'blur',
@@ -276,6 +291,7 @@ export default {
     clear() {
       this.registForm.username = ''
       this.registForm.password = ''
+      this.registForm.passwordConfirm = ''
       this.registForm.captcha = ''
       this.registForm.verifycode = ''
     },
@@ -297,8 +313,9 @@ export default {
                 this.$message({
                   message: res.msg,
                   type: 'success',
-                  duration: 20000
+                  duration: 10000
                 })
+                this.$router.push({ path: this.redirect || '/' })
               } else {
                 this.$message({
                   message: res.msg,
@@ -383,7 +400,7 @@ $light_gray: #eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 80px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }
