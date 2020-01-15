@@ -11,9 +11,10 @@
     >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-order">
-          <div class="card-panel-icon">
-            <i class="el-icon-s-order" />
-          </div>
+          <svg-icon
+            icon-class="guidec"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -36,10 +37,12 @@
     >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-message">
-          <div class="card-panel-icon">
-            <i class="el-icon-s-comment" />
-          </div>
+          <svg-icon
+            icon-class="message"
+            class-name="card-panel-icon"
+          />
         </div>
+
         <div class="card-panel-description">
           <div class="card-panel-text">
             短信
@@ -60,10 +63,12 @@
       class="card-panel-col"
     >
       <div class="card-panel">
+
         <div class="card-panel-icon-wrapper icon-group">
-          <div class="card-panel-icon">
-            <i class="el-icon-s-help" />
-          </div>
+          <svg-icon
+            icon-class="group"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -86,9 +91,10 @@
     >
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-contact">
-          <div class="card-panel-icon">
-            <i class="el-icon-user-solid" />
-          </div>
+          <svg-icon
+            icon-class="user"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
