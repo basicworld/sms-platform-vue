@@ -3,11 +3,22 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.contactSearchKey"
-        placeholder="筛选姓名"
+        placeholder="筛选姓名或手机号"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
+      <el-select
+        v-model="listQuery.groupId"
+        placeholder="筛选群组"
+      >
+        <el-option
+          v-for="group in allContactGroups"
+          :key="group.id"
+          :label="group.groupName"
+          :value="group.id"
+        >{{ group.groupName }}</el-option>
+      </el-select>
       <el-button
         class="filter-item"
         type="primary"
@@ -17,11 +28,28 @@
         搜索
       </el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+    >
       <!-- height="250" -->
-      <el-table-column fixed prop="id" label="联系人ID" width="80" />
-      <el-table-column fixed prop="name" label="姓名" min-width="120" />
-      <el-table-column prop="phone" label="手机号" width="120" />
+      <el-table-column
+        fixed
+        prop="id"
+        label="联系人ID"
+        width="80"
+      />
+      <el-table-column
+        fixed
+        prop="name"
+        label="姓名"
+        min-width="120"
+      />
+      <el-table-column
+        prop="phone"
+        label="手机号"
+        width="120"
+      />
       <el-table-column
         prop="groupDesc"
         label="所在分组"
@@ -36,7 +64,11 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row }">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button
+            type="primary"
+            size="mini"
+            @click="handleUpdate(row)"
+          >
             编辑
           </el-button>
           <el-button
@@ -57,7 +89,10 @@
       :limit.sync="listQuery.limit"
       @pagination="getData"
     />
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form
         ref="updateForm"
         :model="updateForm"
@@ -66,7 +101,10 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="姓名" prop="name">
+            <el-form-item
+              label="姓名"
+              prop="name"
+            >
               <el-input
                 ref="name"
                 v-model="updateForm.name"
@@ -78,12 +116,21 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="手机号" prop="phone">
-              <el-input v-model="updateForm.phone" type="text" />
+            <el-form-item
+              label="手机号"
+              prop="phone"
+            >
+              <el-input
+                v-model="updateForm.phone"
+                type="text"
+              />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="选择群组" prop="selectContactGroups">
+        <el-form-item
+          label="选择群组"
+          prop="selectContactGroups"
+        >
           <el-checkbox-group v-model="updateForm.selectContactGroups">
             <el-checkbox
               v-for="group in allContactGroups"
@@ -97,8 +144,14 @@
         </el-form-item>
       </el-form>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateData()">提交</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          type="primary"
+          @click="updateData()"
+        >提交</el-button>
         <el-button @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -167,6 +220,7 @@ export default {
         create: '新增联系人'
       },
       allContactGroups: [],
+      defaultGroup: [{ id: -1, groupName: '所有分组' }],
       updateForm: {
         id: '',
         userId: '',
@@ -184,7 +238,8 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        contactSearchKey: undefined
+        contactSearchKey: undefined,
+        groupId: -1
       },
       //   currentPage: 1, // 默认显示页面为1
       //   pagesize: 10, //    每页的数据条数
@@ -227,6 +282,7 @@ export default {
   mounted() {},
   created() {
     this.getData()
+    this.getGroupData()
   },
   methods: {
     handleFilter() {
@@ -258,9 +314,16 @@ export default {
       var reqData = {} // 请求参数
       reqData.page = this.listQuery.page
       reqData.limit = this.listQuery.limit
-      if (this.listQuery.contactSearchKey && this.listQuery.contactSearchKey !== '') {
+      if (
+        this.listQuery.contactSearchKey &&
+        this.listQuery.contactSearchKey !== ''
+      ) {
         reqData.searchKey = this.listQuery.contactSearchKey
       }
+      if (this.listQuery.groupId && this.listQuery.groupId !== '' && this.listQuery.groupId !== -1) {
+        reqData.groupId = this.listQuery.groupId
+      }
+      console.log(reqData)
       listContact(reqData)
         .then(res => {
           if (res.code === 0) {
@@ -300,7 +363,7 @@ export default {
                 }
               }
             })
-            this.allContactGroups = res.data
+            this.allContactGroups = this.defaultGroup.concat(res.data)
           }
           this.loading = false
         })

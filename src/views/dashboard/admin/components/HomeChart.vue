@@ -129,11 +129,11 @@ export default {
           }
         },
         legend: {
-          data: ['短信发送量']
+          data: ['近期短信发送量']
         },
         series: [
           {
-            name: '短信发送量',
+            name: '近期短信发送量',
             itemStyle: {
               normal: {
                 color: '#F56C6C',
@@ -144,7 +144,7 @@ export default {
               }
             },
             smooth: true,
-            type: 'line',
+            type: 'bar',
             data: formatData,
             animationDuration: 2800,
             animationEasing: 'cubicInOut'

@@ -16,7 +16,7 @@
 // 4个面板
 import PanelGroup from './components/PanelGroup'
 // 一个折线图
-import LineChart from './components/LineChart'
+import LineChart from './components/HomeChart'
 
 import { smsSendSummary, foreReport } from '@/api/fore'
 // 折线图数据

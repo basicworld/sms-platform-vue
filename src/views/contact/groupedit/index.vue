@@ -1,7 +1,10 @@
 <template>
   <div class="container">
     <el-card class="box-card">
-      <div slot="header" class="clearfix">
+      <div
+        slot="header"
+        class="clearfix"
+      >
         <span>新增群组</span>
       </div>
       <div class="app-container">
@@ -12,7 +15,10 @@
           :rules="sendRules"
           label-width="80px"
         >
-          <el-form-item label="群组名称" prop="groupName">
+          <el-form-item
+            label="群组名称"
+            prop="groupName"
+          >
             <el-input
               ref="groupName"
               v-model="form.groupName"
@@ -20,11 +26,20 @@
               name="groupName"
             />
           </el-form-item>
-          <el-form-item label="备注" prop="note">
-            <el-input v-model="form.note" type="text" />
+          <el-form-item
+            label="备注"
+            prop="note"
+          >
+            <el-input
+              v-model="form.note"
+              type="text"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">提交</el-button>
+            <el-button
+              type="primary"
+              @click="onSubmit"
+            >提交</el-button>
             <el-button @click="onCancel">清空</el-button>
           </el-form-item>
         </el-form>
@@ -32,15 +47,39 @@
     </el-card>
     <br />
     <el-card class="box-card">
-      <div slot="header" class="clearfix">
+      <div
+        slot="header"
+        class="clearfix"
+      >
         <span>群组列表</span>
       </div>
       <div class="app-container">
-        <el-table :data="tableData" stripe style="width: 100%">
-          <el-table-column fixed prop="id" label="群组ID" width="80" />
-          <el-table-column prop="groupName" label="群组名称" min-width="120" />
-          <el-table-column prop="note" label="备注" min-width="170" />
-          <el-table-column prop="contactNum" label="联系人数量" width="120" />
+        <el-table
+          :data="tableData"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column
+            fixed
+            prop="id"
+            label="群组ID"
+            width="80"
+          />
+          <el-table-column
+            prop="groupName"
+            label="群组名称"
+            min-width="120"
+          />
+          <el-table-column
+            prop="note"
+            label="备注"
+            min-width="170"
+          />
+          <el-table-column
+            prop="contactNum"
+            label="联系人数量"
+            width="120"
+          />
           <el-table-column
             label="操作"
             align="center"
@@ -48,7 +87,11 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="{ row }">
-              <el-button type="primary" size="mini" @click="handleUpdate(row)">
+              <el-button
+                type="primary"
+                size="mini"
+                @click="handleUpdate(row)"
+              >
                 编辑
               </el-button>
               <el-button
@@ -80,7 +123,10 @@
             :rules="sendRules"
             label-width="80px"
           >
-            <el-form-item label="群组名称" prop="groupName">
+            <el-form-item
+              label="群组名称"
+              prop="groupName"
+            >
               <el-input
                 ref="groupName"
                 v-model="updateForm.groupName"
@@ -88,12 +134,24 @@
                 name="groupName"
               />
             </el-form-item>
-            <el-form-item label="备注" prop="note">
-              <el-input v-model="updateForm.note" type="text" />
+            <el-form-item
+              label="备注"
+              prop="note"
+            >
+              <el-input
+                v-model="updateForm.note"
+                type="text"
+              />
             </el-form-item>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="updateData()">提交</el-button>
+          <div
+            slot="footer"
+            class="dialog-footer"
+          >
+            <el-button
+              type="primary"
+              @click="updateData()"
+            >提交</el-button>
             <el-button @click="dialogFormVisible = false">取消</el-button>
           </div>
         </el-dialog>
@@ -108,7 +166,11 @@ import {
   updateContactGroup,
   deleteContactGroup
 } from '@/api/contact'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+
 export default {
+  components: { Pagination },
+
   data() {
     return {
       dialogStatus: '',
