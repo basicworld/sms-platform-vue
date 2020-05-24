@@ -50,14 +50,31 @@
         <span>批量导入</span>
       </div>
       <div class="app-container">
-        todo
+        <upload-excel-component
+          :on-success="handleSuccess"
+          :before-upload="beforeUpload"
+        />
+        <el-table
+          :data="excelTableData"
+          border
+          highlight-current-row
+          style="width: 100%;margin-top:20px;"
+        >
+          <el-table-column fixed prop="name" label="姓名" />
+          <el-table-column prop="phone" label="手机号" />
+          <el-table-column prop="note" label="校验结果" />
+        </el-table>
       </div>
     </el-card>
   </div>
 </template>
 <script>
 import { addContact, listContactGroup, uniquePhoneCheck } from '@/api/contact'
+import UploadExcelComponent from './components/UploadExcel/index.vue'
+
 export default {
+  name: 'AddContact',
+  components: { UploadExcelComponent },
   data() {
     // 手机号格式校验
     const validatePhone = (rule, value, callback) => {
@@ -97,6 +114,8 @@ export default {
       }
     }
     return {
+      excelTableData: [],
+      excelTableHeader: [],
       dialogStatus: '',
       textMap: {
         update: '编辑群组',
@@ -244,6 +263,24 @@ export default {
       this.form.name = ''
       this.form.phone = ''
       this.form.selectContactGroups = []
+    },
+    // 处理excel
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (isLt1M) {
+        return true
+      }
+
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    // 处理excel
+    handleSuccess({ results }) {
+      this.excelTableData = results
     }
   }
 }

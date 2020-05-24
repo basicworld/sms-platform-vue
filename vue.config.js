@@ -47,14 +47,16 @@ module.exports = {
         }
       },
       '/sms': {
-        target: `http://127.0.0.1:8080`
+        // target: `http://192.168.0.143:7070`
+        target: `http://127.0.0.1:8081`
         // changeOrigin: true,
         // pathRewrite: {
         //   ['^' + process.env.VUE_APP_BASE_API]: ''
         // }
       },
       '/captcha': {
-        target: `http://127.0.0.1:8080`,
+        // target: `http://192.168.0.143:7070`,
+        target: `http://127.0.0.1:8081`,
         changeOrigin: true,
         pathRewrite: {
           '^/captcha': '/sms/captcha'

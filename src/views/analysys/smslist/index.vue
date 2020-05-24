@@ -19,6 +19,7 @@
     </div>
     <el-table
       :data="tableData"
+      stripe
       style="width: 100%"
     >
       <!-- height="250" -->
@@ -37,7 +38,7 @@
       />
       <el-table-column
         prop="orderId"
-        label="业务ID"
+        label="任务ID"
       />
       <!-- width="80" -->
       <el-table-column

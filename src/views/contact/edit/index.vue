@@ -30,6 +30,7 @@
     </div>
     <el-table
       :data="tableData"
+      stripe
       style="width: 100%"
     >
       <!-- height="250" -->

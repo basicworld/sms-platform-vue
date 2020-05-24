@@ -164,6 +164,7 @@
           </div>
           <el-table
             :data="tableContactData"
+            stripe
             style="width: 100%"
           >
             <!-- height="250" -->
